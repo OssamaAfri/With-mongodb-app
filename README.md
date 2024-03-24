@@ -12,16 +12,13 @@ Le projet `with-mongodb-app` est une API RESTful conçue pour interagir avec une
 - npm (version 6 ou plus) ou yarn (version 1.22 ou plus)
 - Un compte MongoDB Atlas
 
-### Mise en place
+### Installation
 
 1. Clonez le dépôt GitHub :
    `git clone https://github.com/OssamaAfri/With-mongodb-app.git && cd With-mongodb-app`
 
 2. Installez les dépendances :
    `npm install` ou `yarn install`
-
-3. Configurez votre base de données MongoDB Atlas et ajoutez la chaîne de connexion dans un fichier `.env.local` à la racine du projet :
-   `MONGODB_URI=votre_chaine_de_connexion_mongodb`
 
 4. Lancez le serveur de développement :
    `npm run dev` ou `yarn dev`
