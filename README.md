@@ -1,87 +1,52 @@
-<<<<<<< HEAD
-## Example app using MongoDB
+# with-mongodb-app
 
-[MongoDB](https://www.mongodb.com/) is a general purpose, document-based, distributed database built for modern application developers and for the cloud era. This example will show you how to connect to and use MongoDB as your backend for your Next.js app.
+## Description
 
-If you want to learn more about MongoDB, visit the following pages:
+Le projet `with-mongodb-app` est une API RESTful conçue pour interagir avec une base de données de films sur MongoDB. Elle permet aux utilisateurs de rechercher, ajouter, mettre à jour et supprimer des films et des commentaires liés à ces films. Utilisant Next.js et MongoDB Atlas, cette API fournit une solution puissante et évolutive pour la gestion des données cinématographiques.
 
-- [MongoDB Atlas](https://mongodb.com/atlas)
-- [MongoDB Documentation](https://docs.mongodb.com/)
+## Installation
 
-## Deploy your own
+### Prérequis
 
-Once you have access to the environment variables you'll need, deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+- Node.js (version 12 ou plus)
+- npm (version 6 ou plus) ou yarn (version 1.22 ou plus)
+- Un compte MongoDB Atlas
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?project-name=with-mongodb&repository-name=with-mongodb&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-mongodb&integration-ids=oac_jnzmjqM10gllKmSrG0SGrHOH)
+### Mise en place
 
-## How to use
+1. Clonez le dépôt GitHub :
+   `git clone https://github.com/OssamaAfri/With-mongodb-app.git && cd With-mongodb-app`
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init), [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/), or [pnpm](https://pnpm.io) to bootstrap the example:
+2. Installez les dépendances :
+   `npm install` ou `yarn install`
 
-```bash
-npx create-next-app --example with-mongodb with-mongodb-app
-```
+3. Configurez votre base de données MongoDB Atlas et ajoutez la chaîne de connexion dans un fichier `.env.local` à la racine du projet :
+   `MONGODB_URI=votre_chaine_de_connexion_mongodb`
 
-```bash
-yarn create next-app --example with-mongodb with-mongodb-app
-```
+4. Lancez le serveur de développement :
+   `npm run dev` ou `yarn dev`
+   Puis, ouvrez `http://localhost:3000` dans votre navigateur.
 
-```bash
-pnpm create next-app --example with-mongodb with-mongodb-app
-```
+## Stack Technologique
 
-## Configuration
+- **Next.js** : Un framework React pour des applications rendues côté serveur.
+- **MongoDB** : Une base de données NoSQL pour un stockage flexible des documents.
+- **MongoDB Atlas** : Une plateforme cloud pour héberger et gérer des bases de données MongoDB.
 
-### Set up a MongoDB database
+## Conception de l'API
 
-Set up a MongoDB database either locally or with [MongoDB Atlas for free](https://mongodb.com/atlas).
+Endpoints disponibles :
 
-### Set up environment variables
+- **GET `/movies`** : Récupère tous les films.
+- **GET `/movie/:idMovie`** : Récupère un film par son ID.
+- **POST `/movie/:idMovie`** : Ajoute un nouveau film.
+- **PUT `/movie/:idMovie`** : Met à jour un film existant.
+- **DELETE `/movie/:idMovie`** : Supprime un film.
 
-Copy the `env.local.example` file in this directory to `.env.local` (which will be ignored by Git):
+Pour les commentaires :
 
-```bash
-cp .env.local.example .env.local
-```
-
-Set each variable on `.env.local`:
-
-- `MONGODB_URI` - Your MongoDB connection string. If you are using [MongoDB Atlas](https://mongodb.com/atlas) you can find this by clicking the "Connect" button for your cluster.
-
-### Run Next.js in development mode
-
-```bash
-npm install
-npm run dev
-
-# or
-
-yarn install
-yarn dev
-```
-
-Your app should be up and running on [http://localhost:3000](http://localhost:3000)! If it doesn't work, post on [GitHub discussions](https://github.com/vercel/next.js/discussions).
-
-You will either see a message stating "You are connected to MongoDB" or "You are NOT connected to MongoDB". Ensure that you have provided the correct `MONGODB_URI` environment variable.
-
-When you are successfully connected, you can refer to the [MongoDB Node.js Driver docs](https://mongodb.github.io/node-mongodb-native/3.4/tutorials/collections/) for further instructions on how to query your database.
-
-## Deploy on Vercel
-
-You can deploy this app to the cloud with [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
-
-#### Deploy Your Local Project
-
-To deploy your local project to Vercel, push it to GitHub/GitLab/Bitbucket and [import to Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example).
-
-**Important**: When you import your project on Vercel, make sure to click on **Environment Variables** and set them to match your `.env.local` file.
-
-#### Deploy from Our Template
-
-Alternatively, you can deploy using our template by clicking on the Deploy button below.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?project-name=with-mongodb&repository-name=with-mongodb&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-mongodb&integration-ids=oac_jnzmjqM10gllKmSrG0SGrHOH)
-=======
-# D-veloppement-et-Service-Cloud
->>>>>>> 3d4e9dba968c1ecd144eebeac2e7b17ff9a0db57
-# With-mongodb-app
+- **GET `/movie/comments`** : Récupère tous les commentaires d'un film.
+- **GET `/movie/comment/:idComment`** : Récupère un commentaire par son ID.
+- **POST `/movie/comment/:idComment`** : Ajoute un nouveau commentaire.
+- **PUT `/movie/comment/:idComment`** : Met à jour un commentaire existant.
+- **DELETE `/movie/comment/:idComment`** : Supprime un commentaire.
