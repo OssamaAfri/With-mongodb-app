@@ -2,170 +2,140 @@ import { ObjectId } from "mongodb";
 import clientPromise from "../../../lib/mongodb";
 
 /**
-* @swagger
-* paths:
-*   /api/movie/{idMovie}:
-*     get:
-*       summary: Get a movie by id
-*       parameters:
-*         - in: path
-*           name: idMovie
-*           required: true
-*           schema:
-*             type: string
-*           description: Type the movie id to return
-*       responses:
-*         200:
-*           description: Movie retrieved successfully
-*         400:
-*           description: Fail to return the movie - ID doesn't exist or not valid
-* 
-*     post:
-*       summary: Create a new movie entry
-*       requestBody:
-*         required: true
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 title:
-*                   type: string
-*                   description: The title of the movie
-*                 director:
-*                   type: string
-*                   description: The director of the movie
-*                 releaseYear:
-*                   type: string
-*                   description: The release year of the movie
-*       responses:
-*         201:
-*           description: Movie created successfully
-*         400:
-*           description: Failed to create the movie - check provided data
-* 
-*     put:
-*       summary: Update an existing movie by id
-*       parameters:
-*         - in: path
-*           name: idMovie
-*           required: true
-*           schema:
-*             type: string
-*           description: The movie ID to update
-*       requestBody:
-*         required: true
-*         content:
-*           application/json:
-*             schema:
-*               type: object
-*               properties:
-*                 title:
-*                   type: string
-*                   description: The title of the movie
-*                 director:
-*                   type: string
-*                   description: The director of the movie
-*                 releaseYear:
-*                   type: string
-*                   description: The release year of the movie
-*       responses:
-*         200:
-*           description: Movie updated successfully
-*         400:
-*           description: Failed to update the movie - ID doesn't exist or not valid
-* 
-*     delete:
-*       summary: Delete a movie by id
-*       parameters:
-*         - in: path
-*           name: idMovie
-*           required: true
-*           schema:
-*             type: string
-*           description: The movie ID to delete
-*       responses:
-*         200:
-*           description: Movie deleted successfully
-*         400:
-*           description: Failed to delete the movie - ID doesn't exist or not valid
-*/
+ * @swagger
+ * /api/movie/{movieId}:
+ *   get:
+ *     summary: Get a movie by ID
+ *     parameters:
+ *     - in: path
+ *       name: movieId
+ *       required: true
+ *       schema:
+ *         type: string
+ *       description: Numeric ID of the movie to get
+ *     responses:
+ *       200:
+ *         description: Succeded request.
+ *       400:
+ *         description: The movie dosen't exist or is not valid.
+ *   post:
+ *      summary: Insert a new movie
+ *      parameters:
+ *      - in: path
+ *        name: movieId
+ *        required: true
+ *        schema:
+ *          type: string
+ *        description: Numeric ID of the future inserted movie
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *      responses:
+ *        200:
+ *         description: Succeded request.
+ *        400:
+ *         description: The movie dosen't exist or is not valid.
+ *   put:
+ *      summary: Replace data on an existing movie.
+ *      parameters:
+ *      - in: path
+ *        name: movieId
+ *        required: true
+ *        schema:
+ *          type: string
+ *        description: Numeric ID of the future replaced movie
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                _id:
+ *                  type: string
+ *      responses:
+ *         200:
+ *          description: Succeded request.
+ *         400:
+ *          description: The movie dosen't exist or is not valid.
+ *   delete:
+ *      summary: Delete an existing movie.
+ *      parameters:
+ *      - in: path
+ *        name: movieId
+ *        required: true
+ *        schema:
+ *          type: string
+ *        description: Numeric ID of the future deleted movie
+ *      responses:
+ *         200:
+ *          description: Succeded request.
+ *         400:
+ *          description: The movie dosen't exist or is not valid.
+ */
 
 export default async function handler(req, res) {
-    const { idMovie } = req.query;
+    const client = await clientPromise;
+    const db = client.db("sample_mflix");
+    let result;
+
+    // Extrait l'ID du film de l'URL pour GET, PUT, DELETE, ou du corps de la requête pour POST
+    const id = req.method === 'POST' ? req.body._id : req.query.idMovie;
 
     switch (req.method) {
         case "GET":
-            // GET /movie/:idMovie - Retrieve a movie by ID
-            const client = await clientPromise;
-            const db = client.db("sample_mflix");
-            const dbMovie = await db.collection("movies").findOne({ _id: new ObjectId(idMovie) });
-            res.json({ status: 200, data: { movie: dbMovie } });
-            break;
+            // Récupère un film par son ID
+            const movie = await db.collection("movies").findOne({ _id: new ObjectId(id) });
+            if (!movie) {
+                return res.status(404).json({ message: "Movie not found" });
+            }
+            return res.status(200).json(movie);
 
         case "POST":
-            // POST /movie/:idMovie - Add a new movie (you can add movie details in the request body)
+            // Crée un nouveau film, en s'attendant à recevoir l'_id dans le corps de la requête
             try {
-                const clientPost = await clientPromise;
-                const dbPost = clientPost.db("sample_mflix");
-
-                // Placeholder: Replace the following line with your logic to add a new movie
-                const newMovie = req.body; // Assuming request body contains movie details
-                const resultPost = await dbPost.collection("movies").insertOne(newMovie);
-
-                res.json({ status: 201, data: { movie: resultPost.ops[0] } });
+                result = await db.collection("movies").insertOne({ ...req.body, _id: new ObjectId(id) });
+                return res.status(201).json({ message: "Movie added successfully", data: result.ops[0] });
             } catch (error) {
                 console.error("Error adding a new movie:", error);
-                res.status(500).json({ status: 500, message: "Internal Server Error" });
+                return res.status(500).json({ message: "Server error", error });
             }
-            break;
 
         case "PUT":
-            // PUT /movie/:idMovie - Update a movie by ID (you can update movie details in the request body)
+            // Met à jour un film existant par son ID
             try {
-                const clientPut = await clientPromise;
-                const dbPut = clientPut.db("sample_mflix");
-
-                // Placeholder: Replace the following line with your logic to update a movie
-                const updatedMovie = req.body; // Assuming request body contains updated movie details
-                const resultPut = await dbPut.collection("movies").updateOne(
-                    { _id: new ObjectId(idMovie) },
-                    { $set: updatedMovie }
-                );
-
-                if (resultPut.matchedCount > 0) {
-                    res.json({ status: 200, message: "Movie updated successfully" });
-                } else {
-                    res.status(404).json({ status: 404, message: "Movie not found" });
+                result = await db.collection("movies").updateOne({ _id: new ObjectId(id) }, { $set: req.body });
+                if (result.matchedCount === 0) {
+                    return res.status(404).json({ message: "Movie not found" });
                 }
+                return res.status(200).json({ message: "Movie updated successfully" });
             } catch (error) {
                 console.error("Error updating movie:", error);
-                res.status(500).json({ status: 500, message: "Internal Server Error" });
+                return res.status(500).json({ message: "Server error", error });
             }
-            break;
 
         case "DELETE":
-            // DELETE /movie/:idMovie - Delete a movie by ID
+            // Supprime un film par son ID
             try {
-                const clientDelete = await clientPromise;
-                const dbDelete = clientDelete.db("sample_mflix");
-
-                // Placeholder: Replace the following line with your logic to delete a movie
-                const resultDelete = await dbDelete.collection("movies").deleteOne({ _id: new ObjectId(idMovie) });
-
-                if (resultDelete.deletedCount > 0) {
-                    res.json({ status: 200, message: "Movie deleted successfully" });
-                } else {
-                    res.status(404).json({ status: 404, message: "Movie not found" });
+                result = await db.collection("movies").deleteOne({ _id: new ObjectId(id) });
+                if (result.deletedCount === 0) {
+                    return res.status(404).json({ message: "Movie not found" });
                 }
+                return res.status(200).json({ message: "Movie deleted successfully" });
             } catch (error) {
                 console.error("Error deleting movie:", error);
-                res.status(500).json({ status: 500, message: "Internal Server Error" });
+                return res.status(500).json({ message: "Server error", error });
             }
-            break;
 
         default:
-            res.status(405).json({ status: 405, message: "Method Not Allowed" });
-            break;
+            // Répond avec une erreur si la méthode HTTP n'est pas prise en charge
+            res.setHeader("Allow", ["GET", "POST", "PUT", "DELETE"]);
+            return res.status(405).json({ message: "Method Not Allowed" });
     }
 }
